@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <link rel="icon" href="/favicon.ico">
+        <title>Dist-loader example</title>
+        <script src="./src/loader.js"></script>
+        <script>
+            loadResources([{
+                name: 'vuetify.css',
+                // dependency: ['mdi'],
+                timeout: 3000,
+                responseTimeout: 10000,
+                concurrency: 2,
+                random: true,
+                urls: [
+                    "https://unpkg.com/vuetify@2/dist/vuetify.min.css",
+                    "https://cdn.jsdelivr.net/npm/vuetify@2/dist/vuetify.min.css",
+                    "https://cdnjs.cloudflare.com/ajax/libs/vuetify/2.6.6/vuetify.min.css",
+                ]
+            },{
+                name: 'highlightjs.css',
+                // dependency: ['mdi'],
+                timeout: 3000,
+                responseTimeout: 10000,
+                concurrency: 2,
+                random: true,
+                urls: [
+                    "https://unpkg.com/@highlightjs/cdn-assets@11.5.1/styles/atom-one-dark.min.css",
+                    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1//styles/atom-one-dark.min.css",
+                    "https://cdn.jsdelivr.net/npm/highlight.js@@11.5.1/styles/atom-one-dark.min.css",
+                ]
+            }, {
+                name: 'axios',
+                timeout: 3000,
+                responseTimeout: 10000,
+                concurrency: 2,
+                random: true,
+                urls: [
+                    "https://unpkg.com/axios@0.19.2/dist/axios.min.js",
+                    "https://cdn.jsdelivr.net/npm/axios@0.19.2/dist/axios.min.js",
+                    "https://cdn.bootcdn.net/ajax/libs/axios/0.19.2/axios.min.js",
+                ]
+            }, {
+                name: 'js-sha256',
+                timeout: 3000,
+                responseTimeout: 10000,
+                concurrency: 2,
+                random: true,
+                urls: [
+                    "https://unpkg.com/js-sha256@0.9.0/src/sha256.js",
+                    "https://cdn.jsdelivr.net/npm/js-sha256@0.x/src/sha256.min.js",
+                ]
+            }, {
+                name: 'apexchart',
+                timeout: 3000,
+                responseTimeout: 10000,
+                concurrency: 2,
+                random: true,
+                urls: [
+                    "https://unpkg.com/apexcharts@3.28.3/dist/apexcharts.min.js",
+                    "https://cdn.jsdelivr.net/npm/apexcharts@3.28.3/dist/apexcharts.min.js",
+                ]
+            }, {
+                name: 'vue-apexchart',
+                dependency: ['apexchart'],
+                timeout: 3000,
+                responseTimeout: 10000,
+                concurrency: 2,
+                random: true,
+                urls: [
+                    "https://unpkg.com/vue-apexcharts@1.6.2/dist/vue-apexcharts.js",
+                    "https://cdn.jsdelivr.net/npm/vue-apexcharts@1.6.2/dist/vue-apexcharts.min.js",
+                ]
+            }, {
+                name: 'vue',
+                timeout: 3000,
+                responseTimeout: 10000,
+                concurrency: 2,
+                random: true,
+                urls: [
+                    "https://unpkg.com/vue@2.6.11/dist/vue.js",
+                    "https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.js",
+                    "https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.js"
+                ]
+            }, {
+                name: 'vue-router',
+                dependency: ['vue'],
+                timeout: 3000,
+                responseTimeout: 10000,
+                concurrency: 2,
+                random: true,
+                urls: [
+                    "https://unpkg.com/vue-router@3.5.4/dist/vue-router.min.js",
+                    "https://cdn.jsdelivr.net/npm/vue-router@3.5.4/dist/vue-router.min.js",
+                    "https://cdnjs.cloudflare.com/ajax/libs/vue-router/3.5.4/vue-router.min.js"
+                ]
+            }, {
+                name: 'vuex',
+                dependency: ['vue'],
+                timeout: 3000,
+                responseTimeout: 10000,
+                concurrency: 2,
+                random: true,
+                urls: [
+                    "https://unpkg.com/vuex@3.5.1/dist/vuex.min.js",
+                    "https://cdn.jsdelivr.net/npm/vuex@3.5.1/dist/vuex.min.js",
+                    "https://cdnjs.cloudflare.com/ajax/libs/vuex/3.5.1/vuex.min.js"
+                ]
+            }, {
+                name: 'vue-18n',
+                dependency: ['vue'],
+                timeout: 3000,
+                responseTimeout: 10000,
+                concurrency: 2,
+                random: true,
+                urls: [
+                    "https://unpkg.com/vue-i18n@8.18.2/dist/vue-i18n.min.js",
+                    "https://cdn.jsdelivr.net/npm/vue-i18n@8.18.2/dist/vue-i18n.min.js",
+                ]
+            }, {
+                name: 'vuetify',
+                dependency: ['vue'],
+                timeout: 3000,
+                responseTimeout: 10000,
+                concurrency: 2,
+                random: true,
+                urls: [
+                    "https://unpkg.com/vuetify@2/dist/vuetify.min.js",
+                    "https://cdn.jsdelivr.net/npm/vuetify@2/dist/vuetify.min.js",
+                    "https://cdnjs.cloudflare.com/ajax/libs/vuetify/2.6.6/vuetify.min.js",
+                ]
+            }, {
+                name: 'app.css',
+                load: false,
+                urls: '/css/app.css'
+            }, {
+                name: 'chunk.css',
+                load: false,
+                urls: '/css/chunk-vendors.css'
+            }, {
+                name: 'app',
+                dependency: ['vue', 'vuex', 'vue-router', 'vue-18n', 'vuetify', 'axios', 'vue-apexchart'],
+                urls: '/js/app.js'
+            }, {
+                name: 'chunk',
+                dependency: ['vue', 'vuex', 'vue-router', 'vue-18n', 'vuetify', 'axios', 'vue-apexchart'],
+                urls: '/js/chunk-vendors.js'
+            }])
+        </script>
+     </head>
+    <body>
+        <div id="app"></div></body>
+</html>
