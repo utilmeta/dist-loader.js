@@ -121,6 +121,7 @@ function buildFiles(dev=false) {
                         link: dirObj.link,
                         load: dirObj.load,
                         urls: ref,
+                        app: true,
                     });
                 })
                 continue
@@ -138,6 +139,7 @@ function buildFiles(dev=false) {
                     link: dirObj.link,
                     load: dirObj.load,
                     urls: ref,
+                    app: true,
                 });
             });
         }

@@ -115,6 +115,7 @@ function ResourceLoader(options) {
         loadingController: {},
         // url: abortController, use object to enable concurrency safe
         errorUrls: [],
+        retriedUrls: [],
         finished: false,
         applied: false,
         finishedUrl: null,
@@ -128,7 +129,12 @@ function ResourceLoader(options) {
             }
             delete this.loadingController[url];
             if (error) {
-                this.errorUrls.push(url);
+                if(this.errorUrls.includes(url)){
+                    // in retry mode
+                    this.retriedUrls.push(url)
+                }else{
+                    this.errorUrls.push(url);
+                }
             } else {
                 // if successfully finish, abort all pending fetch urls
                 Object.values(this.loadingController).forEach(function (controller){
@@ -175,7 +181,9 @@ function ResourceLoader(options) {
                 }
             };
             xhr.open("GET", url, true);
-            xhr.timeout = timeout;      // set after open
+            if(timeout){
+                xhr.timeout = timeout;      // set after open
+            }
             if (responseTimeout) {
                 setTimeout(function (){
                     xhr.abort();
@@ -286,7 +294,7 @@ function ResourceLoader(options) {
         errorCallback: function(url) {
             this.finishURL(url, true)
         },
-        getAvailableUrls: function() {
+        getAvailableUrls: function(retry) {
             // apply priority / randomness in this function
             let priorities = this.priorityGetter ? this.priorityGetter() : null;
             let urls = []
@@ -294,8 +302,16 @@ function ResourceLoader(options) {
             let _this = this;
             this.urls.forEach(function(urlObject){
                 let url = urlObject.url;
-                if (_this.loadingController[url] || _this.errorUrls.includes(url)) {
+                if (_this.loadingController[url]) {
                     return
+                }
+                if(retry){
+                    if(_this.retriedUrls.includes(url)){
+                        return;
+                    }
+                }
+                else if(_this.errorUrls.includes(url)){
+                    return;
                 }
                 let priority = priorities ? (priorities[url.host] || null) : null;
                 if (priority === null) {
@@ -318,10 +334,11 @@ function ResourceLoader(options) {
                 }
                 return;
             }
-            if(this.errorUrls.length === this.urls.length){
 
-            }
-            let urls = this.getAvailableUrls();
+            let retry = this.errorUrls.length >= this.urls.length
+            // if errorUrls is full and still not finish, turn to retry mode and ignore all timeout
+
+            let urls = this.getAvailableUrls(retry);
             for (let i in urls) {
                 if(!urls.hasOwnProperty(i)){
                     continue;
@@ -329,9 +346,13 @@ function ResourceLoader(options) {
                 let urlObject = urls[i];
                 this.loadingController[urlObject.url] = this.fetchURL(
                     urlObject.url,
-                    urlObject.timeout,
-                    urlObject.responseTimeout
+                    retry ? null : urlObject.timeout,
+                    retry ? null : urlObject.responseTimeout
                 )
+                if(retry){
+                    // in retry mode, only 1 url is retried each time
+                    return;
+                }
                 if (this.concurrency && Object.keys(this.loadingController).length >= this.concurrency) {
                     // hit concurrency
                     return
@@ -389,8 +410,9 @@ const DistributedLoader = {
                 random: getConfig([src, defaultConfig], 'random', false),
                 load: getConfig([src, defaultConfig], 'load', true),
                 link: getConfig([src, defaultConfig], 'link', false),
-                timeout: getConfig([src, defaultConfig], 'timeout', null),
-                responseTimeout: getConfig([src, defaultConfig], 'responseTimeout', null),
+                // IMPORTANT: if src is app file (app.js / app.css) timeout cannot be applied
+                timeout: src.app ? null : getConfig([src, defaultConfig], 'timeout', null),
+                responseTimeout: src.app ? null : getConfig([src, defaultConfig], 'responseTimeout', null),
                 callback: getConfig([src, defaultConfig], 'callback', null),
                 reporter: function(args) {return _this.report(args)},
                 priorityGetter: function() {return _this.hostPriority}
